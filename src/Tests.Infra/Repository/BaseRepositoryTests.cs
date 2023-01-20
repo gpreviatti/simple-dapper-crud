@@ -10,10 +10,7 @@ public class BaseRepositoryTests : IDisposable
 {
     private readonly string _connectionString = "Data Source=TestDB.sqlite";
     private readonly IBaseRepository<Person> _repository;
-    private readonly Person _testEntity = new() {  
-        Id = Guid.NewGuid().ToString(),
-        Name = "Test" 
-    };
+    private Person entity = new(Guid.NewGuid().ToString(), "Test");
 
     public BaseRepositoryTests()
     {
@@ -24,7 +21,7 @@ public class BaseRepositoryTests : IDisposable
         connection.Execute($@"CREATE TABLE IF NOT EXISTS {nameof(Person)} (
             Id VARCHAR(100) NOT NULL,
             Name VARCHAR(100) NOT NULL,
-            Email VARCHAR(1000) NULL
+            Email VARCHAR(100) NULL
         );");
     }
 
@@ -34,56 +31,56 @@ public class BaseRepositoryTests : IDisposable
         // Arrange
 
         // Act
-        await _repository.Create(_testEntity);
+        await _repository.Create(entity);
 
         using var connection = new SqliteConnection(_connectionString);
-        var result = await connection.QueryFirstAsync<Person>($"SELECT * FROM {nameof(Person)} WHERE Id = @Id", new { Id = _testEntity.Id });
+        var result = await connection.QueryFirstAsync<Person>($"SELECT * FROM {nameof(Person)} WHERE Id = @Id", new { entity.Id });
 
         // Assert
-        Assert.Equal(_testEntity.Name, result.Name);
+        Assert.Equal(entity.Name, result.Name);
     }
 
     [Fact(DisplayName = nameof(Read_ShouldReturnRecordFromDatabase))]
     public async Task Read_ShouldReturnRecordFromDatabase()
     {
         // Arrange
-        await _repository.Create(_testEntity);
+        await _repository.Create(entity);
 
         // Act
-        var result = await _repository.Read(_testEntity.Id);
+        var result = await _repository.Read(entity.Id);
 
         // Assert
-        Assert.Equal(_testEntity.Name, result.Name);
+        Assert.Equal(entity.Name, result.Name);
     }
 
     [Fact(DisplayName = nameof(Update_ShouldUpdateRecordInDatabase))]
     public async Task Update_ShouldUpdateRecordInDatabase()
     {
         // Arrange
-        await _repository.Create(_testEntity);
-        _testEntity.Name = "Test2";
+        await _repository.Create(entity);
+        entity.Name = "Test2";
 
         // Act
-        await _repository.Update(_testEntity);
+        await _repository.Update(entity);
 
         using var connection = new SqliteConnection(_connectionString);
-        var result = await connection.QueryFirstAsync<Person>($"SELECT * FROM {nameof(Person)} WHERE Id = @Id", new { Id = _testEntity.Id });
+        var result = await connection.QueryFirstAsync<Person>($"SELECT * FROM {nameof(Person)} WHERE Id = @Id", new { entity.Id });
 
         // Assert
-        Assert.Equal(_testEntity.Name, result.Name);
+        Assert.Equal(entity.Name, result.Name);
     }
 
     [Fact(DisplayName = nameof(Delete_ShouldDeleteRecordFromDatabase))]
     public async Task Delete_ShouldDeleteRecordFromDatabase()
     {
         // Arrange
-        await _repository.Create(_testEntity);
+        await _repository.Create(entity);
 
         // Act
-        await _repository.Delete(_testEntity.Id);
+        await _repository.Delete(entity.Id);
 
         using var connection = new SqliteConnection(_connectionString);
-        var result = await connection.QueryFirstOrDefaultAsync<Person>($"SELECT * FROM {nameof(Person)} WHERE Id = @Id", new { Id = _testEntity.Id });
+        var result = await connection.QueryFirstOrDefaultAsync<Person>($"SELECT * FROM {nameof(Person)} WHERE Id = @Id", new { entity.Id });
 
         // Assert
         Assert.Null(result);
