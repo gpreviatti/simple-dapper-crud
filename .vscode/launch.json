@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Tests.Infra/bin/Debug/net7.0/Tests.Infra.dll",
+            "program": "${workspaceFolder}/src/Tests.Infra/bin/Debug/net7.0/Tests.Infra.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Tests.Infra",
+            "cwd": "${workspaceFolder}/src/Tests.Infra",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
             "stopAtEntry": false
